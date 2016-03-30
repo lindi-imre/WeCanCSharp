@@ -12,12 +12,13 @@ namespace ProcessNote.Controller
     class ProcessManager
     {
         private List<SystemProcess> systemProcesses;
-
+        
 
         public ProcessManager()
         {
             this.systemProcesses = SystemProcesses;
         }
+
         public List<SystemProcess> SystemProcesses
         {
             get
@@ -31,14 +32,27 @@ namespace ProcessNote.Controller
             }
         }
       
+        private SystemProcess ElementFromSystemProcesses(int id)
+        {
+            foreach (SystemProcess systemProcess in systemProcesses)
+            {
+                if (systemProcess.Id == id)
+                {
+                    return systemProcess;
+                }
+            }
+            return null;
+        }
+
         public SystemProcess GetProcessInfo(int id)
         {
-            return null;
+            return ElementFromSystemProcesses(id);
         }
 
         public ProcessThreadCollection GetThreadsInfo(int id)
         {
-            return null;
+            SystemProcess sysProcess = ElementFromSystemProcesses(id);
+            return sysProcess.Threads;
         }
     }
 }
