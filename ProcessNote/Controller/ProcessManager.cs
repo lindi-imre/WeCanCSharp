@@ -11,17 +11,26 @@ namespace ProcessNote.Controller
 {
     class ProcessManager
     {
-        public List<SystemProcess> GetProcessesFromSystem()
-        {
-            List<SystemProcess> resultList = new List<SystemProcess>();
-            Process[] processes = Process.GetProcesses();
-            foreach (Process process in processes)
-            {
-                resultList.Add((SystemProcess) process);
-            }
-            return resultList;
-        }
+        private List<SystemProcess> systemProcesses;
 
+
+        public ProcessManager()
+        {
+            this.systemProcesses = SystemProcesses;
+        }
+        public List<SystemProcess> SystemProcesses
+        {
+            get
+            {
+                Process[] processes = Process.GetProcesses();
+                foreach (Process process in processes)
+                {
+                    systemProcesses.Add((SystemProcess)process);
+                }
+                return systemProcesses;
+            }
+        }
+      
         public SystemProcess GetProcessInfo(int id)
         {
             return null;
