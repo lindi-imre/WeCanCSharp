@@ -13,6 +13,7 @@ namespace ProcessNote.Controller
     {
         private List<SystemProcess> systemProcesses;
         
+
         public ProcessManager()
         {
             this.systemProcesses = SystemProcesses;
@@ -33,7 +34,6 @@ namespace ProcessNote.Controller
       
         private SystemProcess ElementFromSystemProcesses(int id)
         {
-            this.systemProcesses = SystemProcesses;
             foreach (SystemProcess systemProcess in systemProcesses)
             {
                 if (systemProcess.Id == id)
