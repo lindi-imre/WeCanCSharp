@@ -11,8 +11,7 @@ namespace ProcessNote.Controller
 {
     class ProcessManager
     {
-        private List<SystemProcess> systemProcesses;
-        
+        private List<SystemProcess> systemProcesses = new List<SystemProcess>();
 
         public ProcessManager()
         {
@@ -24,9 +23,10 @@ namespace ProcessNote.Controller
             get
             {
                 Process[] processes = Process.GetProcesses();
+                systemProcesses.Clear();
                 foreach (Process process in processes)
                 {
-                    systemProcesses.Add((SystemProcess)process);
+                    systemProcesses.Add(new SystemProcess(process));
                 }
                 return systemProcesses;
             }
@@ -36,7 +36,7 @@ namespace ProcessNote.Controller
         {
             foreach (SystemProcess systemProcess in systemProcesses)
             {
-                if (systemProcess.Id == id)
+                if (systemProcess.Process.Id == id)
                 {
                     return systemProcess;
                 }
@@ -51,8 +51,17 @@ namespace ProcessNote.Controller
 
         public ProcessThreadCollection GetThreadsInfo(int id)
         {
+            ProcessThreadCollection threadsOfProcess = null;
             SystemProcess sysProcess = ElementFromSystemProcesses(id);
-            return sysProcess.Threads;
+            try
+            {
+                threadsOfProcess = sysProcess.Process.Threads;
+                return sysProcess.Process.Threads;
+            }
+            catch (Exception exp)
+            {
+                return threadsOfProcess;
+            }
         }
     }
 }

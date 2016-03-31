@@ -7,12 +7,14 @@ using System.Threading.Tasks;
 
 namespace ProcessNote.Model
 {
-    public class SystemProcess: Process
+    public class SystemProcess
     {
         private string comment;
+        private Process process;
 
-        public SystemProcess()
+        public SystemProcess(Process process)
         {
+            this.Process = process;
             Comment = "";
         }
 
@@ -26,6 +28,19 @@ namespace ProcessNote.Model
             set
             {
                 comment = value;
+            }
+        }
+
+        public Process Process
+        {
+            get
+            {
+                return process;
+            }
+
+            set
+            {
+                process = value;
             }
         }
     }
