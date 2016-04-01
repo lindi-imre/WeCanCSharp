@@ -19,6 +19,10 @@ namespace ProcessNote
     {
         List<SystemProcess> systemProcesses;
         ProcessManager processManager;
+        private bool isSavedComment = false;
+        private bool commentIsChanged = false;
+        private string comment;
+        private int previousIndex = -1;
 
         public Form1()
         {
@@ -43,18 +47,32 @@ namespace ProcessNote
         {
             int index = resultListBox.SelectedIndex;
             SystemProcess selectedProcess = systemProcesses[index];
-            nameTextBox.Text = selectedProcess.Process.ProcessName;
-            PIDTextBox.Text = selectedProcess.Process.Id.ToString();
-            //CPUTextBox.Text = selectedProcess.Process.TotalProcessorTime.ToString();
-            memoryTextBox.Text = (selectedProcess.Process.WorkingSet / 1024 / 1024).ToString();
-            //runningTimeTextBox.Text = (DateTime.Now.Second - selectedProcess.Process.StartTime.Second).ToString();
-            //startTimeTextBox.Text = selectedProcess.Process.StartTime.Second.ToString();
-            if (commentRichTextBox.Text != selectedProcess.Comment)
+            try
             {
-                MessageBox.Show("Please save the comment!");
-                resultListBox.SetSelected(index, false);
+                nameTextBox.Text = selectedProcess.Process.ProcessName;
+                PIDTextBox.Text = selectedProcess.Process.Id.ToString();
+                PerformanceCounter performanceCounter = new PerformanceCounter("Process", "% Processor Time", selectedProcess.Process.ProcessName);
+                performanceCounter.NextValue();
+                System.Threading.Thread.Sleep(1000);
+                CPUTextBox.Text = performanceCounter.NextValue().ToString();
+                memoryTextBox.Text = (selectedProcess.Process.WorkingSet64 / 1024 / 1024).ToString();
+                runningTimeTextBox.Text = (DateTime.Now - selectedProcess.Process.StartTime).TotalSeconds.ToString();
+                startTimeTextBox.Text = selectedProcess.Process.StartTime.ToString();
+                if (!commentIsChanged)
+                {
+                    commentRichTextBox.Text = selectedProcess.Comment;
+                }
+                else
+                {
+                    MessageBox.Show("Please save the comment!");
+                    resultListBox.SelectedIndex = previousIndex;
+                }
+                previousIndex = index;
             }
-            commentRichTextBox.Text = selectedProcess.Comment;
+            catch(Exception exp)
+            {
+               MessageBox.Show("You have no permission to access the execution this process");
+            }
         }
 
         private bool isSelectedProcess()
@@ -70,31 +88,36 @@ namespace ProcessNote
 
         private void saveCommentButton_Click(object sender, EventArgs e)
         {
-            int index = resultListBox.SelectedIndex;
             if (isSelectedProcess())
             {
+                int index = resultListBox.SelectedIndex;
                 SystemProcess selectedProcess = systemProcesses[index];
                 selectedProcess.Comment = commentRichTextBox.Text;
+                commentIsChanged = false;
             }
             else
             {
-                MessageBox.Show("Please select a process first!");
+                MessageBox.Show("Select a process first!");
             }
         }
 
         private void threadsButton_Click(object sender, EventArgs e)
         {
-            int index = resultListBox.SelectedIndex;
-            SystemProcess selectedProcess = systemProcesses[index];
-            ProcessThreadCollection selectedThreadsOfProcess = processManager.GetThreadsInfo(index);
-            if (isSelectedProcess() && selectedThreadsOfProcess != null)
+            if (isSelectedProcess())
             {
-                ThreadsForm threadsForm = new ThreadsForm(selectedThreadsOfProcess);
-                threadsForm.ShowDialog();
+                int index = resultListBox.SelectedIndex;
+                SystemProcess selectedProcess = systemProcesses[index];
+                string selectedProcessName = selectedProcess.Process.ProcessName;
+                Process[] selectedThreadsOfProcess = processManager.GetThreadsInfo(selectedProcessName, selectedProcess.Process.Id);
+                if (selectedThreadsOfProcess != null)
+                {
+                    ThreadsForm threadsForm = new ThreadsForm(selectedThreadsOfProcess);
+                    threadsForm.ShowDialog();
+                }
             }
             else
             {
-                MessageBox.Show(string.Format("{0} [{1}] have not got any threads.", selectedProcess.Process.ProcessName, selectedProcess.Process.Id));
+                MessageBox.Show(string.Format("Select a process first!"));
             }
         }
 
@@ -102,5 +125,28 @@ namespace ProcessNote
         {
             this.Close();
         }
+
+        private void keepOnTopCheckBox_CheckedChanged(object sender, EventArgs e)
+        {
+            if (this.TopMost)
+            {
+                this.TopMost = false;
+            }
+            else
+            {
+                this.TopMost = true;
+            }
+        }
+
+        private void commentRichTextBox_TextChanged(object sender, EventArgs e)
+        {
+            commentIsChanged = true;
+            comment = commentRichTextBox.Text;
+        }
+
+        //private void resultListBox_DoubleClick(object sender, EventArgs e)
+        //{
+        //    resultListBox_SelectedIndexChanged(sender, e);
+        //}
     }
 }

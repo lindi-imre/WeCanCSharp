@@ -48,6 +48,7 @@
             this.exitButton = new System.Windows.Forms.Button();
             this.saveCommentButton = new System.Windows.Forms.Button();
             this.threadsButton = new System.Windows.Forms.Button();
+            this.keepOnTopCheckBox = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // resultListBox
@@ -177,6 +178,7 @@
             this.commentRichTextBox.Size = new System.Drawing.Size(237, 60);
             this.commentRichTextBox.TabIndex = 14;
             this.commentRichTextBox.Text = "";
+            this.commentRichTextBox.TextChanged += new System.EventHandler(this.commentRichTextBox_TextChanged);
             // 
             // commentLabel
             // 
@@ -227,11 +229,23 @@
             this.threadsButton.UseVisualStyleBackColor = true;
             this.threadsButton.Click += new System.EventHandler(this.threadsButton_Click);
             // 
+            // keepOnTopCheckBox
+            // 
+            this.keepOnTopCheckBox.AutoSize = true;
+            this.keepOnTopCheckBox.Location = new System.Drawing.Point(699, 12);
+            this.keepOnTopCheckBox.Name = "keepOnTopCheckBox";
+            this.keepOnTopCheckBox.Size = new System.Drawing.Size(84, 17);
+            this.keepOnTopCheckBox.TabIndex = 21;
+            this.keepOnTopCheckBox.Text = "Keep on top";
+            this.keepOnTopCheckBox.UseVisualStyleBackColor = true;
+            this.keepOnTopCheckBox.CheckedChanged += new System.EventHandler(this.keepOnTopCheckBox_CheckedChanged);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(807, 462);
+            this.Controls.Add(this.keepOnTopCheckBox);
             this.Controls.Add(this.threadsButton);
             this.Controls.Add(this.saveCommentButton);
             this.Controls.Add(this.exitButton);
@@ -252,8 +266,9 @@
             this.Controls.Add(this.nameTextBox);
             this.Controls.Add(this.titleLabel);
             this.Controls.Add(this.resultListBox);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Name = "Form1";
-            this.Text = "Form1";
+            this.Text = "Process Note";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -281,6 +296,7 @@
         private System.Windows.Forms.Button exitButton;
         private System.Windows.Forms.Button saveCommentButton;
         private System.Windows.Forms.Button threadsButton;
+        private System.Windows.Forms.CheckBox keepOnTopCheckBox;
     }
 }
 

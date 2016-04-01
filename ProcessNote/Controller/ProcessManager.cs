@@ -49,18 +49,18 @@ namespace ProcessNote.Controller
             return ElementFromSystemProcesses(id);
         }
 
-        public ProcessThreadCollection GetThreadsInfo(int id)
+        public Process[] GetThreadsInfo(string name, int id)
         {
-            ProcessThreadCollection threadsOfProcess = null;
-            SystemProcess sysProcess = ElementFromSystemProcesses(id);
-            try
-            {
-                threadsOfProcess = sysProcess.Process.Threads;
-                return sysProcess.Process.Threads;
-            }
-            catch (Exception exp)
+            Process processFromSystem = Process.GetProcessById(id);
+            Process[] threadsOfProcess = Process.GetProcessesByName(name);
+            SystemProcess sysProc = ElementFromSystemProcesses(id);
+            if (processFromSystem.ProcessName == sysProc.Process.ProcessName)
             {
                 return threadsOfProcess;
+            }
+            else
+            {
+                return null;
             }
         }
     }
